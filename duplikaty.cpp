@@ -1,6 +1,6 @@
 /*
-Dla zadanej tablicy liczb ca³kowitych o rozmiarze n zawieraj¹cej wartoœci z przedzia³u [1, n-1] znajdŸ element powtarzaj¹cy siê.
-Przyk³ad:
+Dla zadanej tablicy liczb calkowitych o rozmiarze n zawierajacej wartosci z przedzialu [1, n-1] znajdz element powtarzajacy sie.
+Przyklad:
 we = 1, 2, 3, 4, 4
 -> 4
 */
@@ -34,17 +34,17 @@ std::chrono::duration<double> czas;
 
 
 /////////////////////////////////////////////////////////////////////
-/* funkcja znajduje i zwraca elementy powtarzaj¹ce siê - algorytm histogramu */
+/* funkcja znajduje i zwraca elementy powtarzajace sie - algorytm histogramu */
 /* Algorytm o zlozonosci O(2n) */
 std::vector<int> znajdz_duplikaty_histogram(std::vector<int> arr)
 {
-    std::vector<int> wynik; // tablica zawieraj¹ca znalezione powtarzajace sie liczby
-    std::vector<int> histogram(arr.size(), 0); // tablica histogramu wype³nione zerami
+    std::vector<int> wynik; // tablica zawierajaca znalezione powtarzajace sie liczby
+    std::vector<int> histogram(arr.size(), 0); // tablica histogramu wypelnione zerami
 
     for (size_t i = 0; i < arr.size(); i++)
     {
         int liczba = arr[i];
-        histogram[liczba] ++; // zwiêkszanie elementu histogramu o 1
+        histogram[liczba] ++; // zwiekszanie elementu histogramu o 1
     }
 
     for (size_t i = 0; i < histogram.size(); i++)
@@ -58,7 +58,7 @@ std::vector<int> znajdz_duplikaty_histogram(std::vector<int> arr)
 
 
 /////////////////////////////////////////////////////////////////////
-/* funkcja znajduje i zwraca elementy powtarzaj¹ce siê - algorytm 2 zagniezdzonych petli */
+/* funkcja znajduje i zwraca elementy powtarzajace sie - algorytm 2 zagniezdzonych petli */
 /* Algorytm o zlozonosci O(n^2)-n */
 std::vector<int> znajdz_duplikaty_2_petle(std::vector<int> arr)
 {
@@ -66,13 +66,13 @@ std::vector<int> znajdz_duplikaty_2_petle(std::vector<int> arr)
 
     for (size_t i = 0; i < arr.size(); i++)
     {
-        int liczba1 = arr[i]; // pierwsza liczba do porównywania
+        int liczba1 = arr[i]; // pierwsza liczba do porownywania
         
-        if (!zawiera_element(wynik, liczba1)) // sprawdzenie czy liczba1 nie jest ju¿ zapisana w tablicy powtorki jako powtarzajaca sie
+        if (!zawiera_element(wynik, liczba1)) // sprawdzenie czy liczba1 nie jest juz zapisana w tablicy powtorki jako powtarzajaca sie
         {
             for (size_t j = i + 1; j < arr.size(); j++)
             {
-                int liczba2 = arr[j]; // druga liczba do porównania
+                int liczba2 = arr[j]; // druga liczba do porownania
 
                 if (liczba1 == liczba2 && !zawiera_element(wynik, liczba2))
                     wynik.push_back(liczba1); // dodaj liczbe jesli liczba1==liczba2 i nie ma jej w tablicy powtorki
@@ -84,7 +84,7 @@ std::vector<int> znajdz_duplikaty_2_petle(std::vector<int> arr)
 
 
 /////////////////////////////////////////////////////////////////////
-/* funkcja sprawdza czy podana liczba wystêpuje w tablicy */
+/* funkcja sprawdza czy podana liczba wystepuje w tablicy */
 bool zawiera_element(std::vector<int> arr, int liczba)
 {
     return std::find(arr.begin(), arr.end(), liczba) != arr.end();
@@ -92,7 +92,7 @@ bool zawiera_element(std::vector<int> arr, int liczba)
 
 
 /////////////////////////////////////////////////////////////////////
-/* funkcja generuje tablice n elementów typu int z przedzia³u [1, n-1] */
+/* funkcja generuje tablice n elementow typu int z przedzialu [1, n-1] */
 std::vector<int> generuj_losowy_ciag(int n)
 {
     std::vector<int> arr;
@@ -124,7 +124,7 @@ void wypisz_ciag(std::vector<int> arr)
 
 
 /////////////////////////////////////////////////////////////////////
-/* funkcja zapisuje tablice elementów int do pliku */
+/* funkcja zapisuje tablice elementow int do pliku */
 void zapisz_ciag_do_pliku(std::string nazwa_pliku, std::vector<int> arr)
 {
     std::fstream plik;
@@ -139,7 +139,7 @@ void zapisz_ciag_do_pliku(std::string nazwa_pliku, std::vector<int> arr)
 
 
 /////////////////////////////////////////////////////////////////////
-/* funkcja odczytuje tablice elementów int z pliku */
+/* funkcja odczytuje tablice elementow int z pliku */
 std::vector<int> odczytaj_ciag_z_pliku(std::string nazwa_pliku)
 {
     std::vector<int> arr;
@@ -160,7 +160,7 @@ std::vector<int> odczytaj_ciag_z_pliku(std::string nazwa_pliku)
 
 
 /////////////////////////////////////////////////////////////////////
-/* funkcja odczytuje tablice elementów float z pliku */
+/* funkcja odczytuje tablice elementow float z pliku */
 void zapisz_ciag_floatow_do_pliku(std::string nazwa_pliku, std::vector<double> arr)
 {
     std::fstream plik;
@@ -175,13 +175,13 @@ void zapisz_ciag_floatow_do_pliku(std::string nazwa_pliku, std::vector<double> a
 
 
 /////////////////////////////////////////////////////////////////////
-/* funkcja przeprowadza pomiary czasów obliczeñ dla obu algorytmów i ró¿nych wielkoœci tablic */
+/* funkcja przeprowadza pomiary czasow obliczen dla obu algorytmow i roznych wielkosci tablic */
 void testy()
 {
     int arrLength = 100; // zmienna pomocnicza
     std::vector<int> arr; // tablica z wygenerowanymi liczbami
     int liczba_testow = 10;
-    std::vector<int> wynik; // tablica z powtórzonymi liczbami
+    std::vector<int> wynik; // tablica z powtorzonymi liczbami
     std::vector<double> czas2Petle(liczba_testow); // czasy obliczen alg. 2 petle
     std::vector<double> czasHistogram(liczba_testow); // czasy obliczen alg. histogram
     std::string plik_we = "plik_we";
@@ -271,5 +271,5 @@ int main()
     // testy
     std::cout << "*** Testy - prosze czekac..." << std::endl;
     testy();
-    std::cout << "Wyniki zostaly zapisane do plików." << std::endl;
+    std::cout << "Wyniki zostaly zapisane do plikow." << std::endl;
 }
