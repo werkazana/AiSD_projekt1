@@ -81,7 +81,7 @@ std::vector<int> znajdz_duplikaty_mapa(std::vector<int> arr)
     {
         int key = iter->first;
         int value = iter->second;
-        if(value > 1)
+        if (value > 1)
             wynik.push_back(key);
     }
 
@@ -259,7 +259,8 @@ void testy()
 }
 
 
-
+/////////////////////////////////////////////////////////////////////
+/* funkcja main */
 int main()
 {
     // inicjalizacja generatora liczb losowych
