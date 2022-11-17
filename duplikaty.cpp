@@ -7,6 +7,7 @@ we = 1, 2, 3, 4, 4
 
 #include <iostream>
 #include <vector>
+#include <map>
 #include <chrono>
 #include <iomanip>
 #include <string>
@@ -58,6 +59,34 @@ std::vector<int> znajdz_duplikaty_histogram(std::vector<int> arr)
 
 
 /////////////////////////////////////////////////////////////////////
+/* funkcja znajduje i zwraca elementy powtarzajace sie - algorytm mapy */
+std::vector<int> znajdz_duplikaty_mapa(std::vector<int> arr)
+{
+    std::vector<int> wynik; // tablica zawierajaca znalezione powtarzajace sie liczby
+    std::map<int, int> map; // mapa klucz - wartość
+
+    for (size_t i = 0; i < arr.size(); i++)
+    {
+        int liczba = arr[i];
+        if (map.find(liczba) != map.end())
+            map[liczba]++;
+        else
+            map[liczba] = 1;
+    }
+
+    for (std::map<int, int>::iterator iter = map.begin(); iter != map.end(); ++iter)
+    {
+        int key = iter->first;
+        int value = iter->second;
+        if(value > 1)
+            wynik.push_back(key);
+    }
+
+    return wynik;
+}
+
+
+/////////////////////////////////////////////////////////////////////
 /* funkcja znajduje i zwraca elementy powtarzajace sie - algorytm 2 zagniezdzonych petli */
 /* Algorytm o zlozonosci O(n^2)-n */
 std::vector<int> znajdz_duplikaty_2_petle(std::vector<int> arr)
@@ -67,7 +96,7 @@ std::vector<int> znajdz_duplikaty_2_petle(std::vector<int> arr)
     for (size_t i = 0; i < arr.size(); i++)
     {
         int liczba1 = arr[i]; // pierwsza liczba do porownywania
-        
+
         if (!zawiera_element(wynik, liczba1)) // sprawdzenie czy liczba1 nie jest juz zapisana w tablicy powtorki jako powtarzajaca sie
         {
             for (size_t j = i + 1; j < arr.size(); j++)
@@ -98,7 +127,7 @@ std::vector<int> generuj_losowy_ciag(int n)
     std::vector<int> arr;
     int zakres = n - 1;
 
-    for (size_t i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
     {
         int liczba = rand() % zakres + 1; // wygenerowana liczba losowa z zakresu [1, n-1]
         arr.push_back(liczba);
@@ -146,7 +175,7 @@ std::vector<int> odczytaj_ciag_z_pliku(std::string nazwa_pliku)
 
     std::fstream plik;
     plik.open(nazwa_pliku.c_str(), std::ios::in); // otworz plik o nazwie nazwa do odczytu (in)
-    
+
     int liczba;
     while (plik >> liczba)
     {
@@ -184,32 +213,38 @@ void testy()
     std::vector<int> wynik; // tablica z powtorzonymi liczbami
     std::vector<double> czas2Petle(liczba_testow); // czasy obliczen alg. 2 petle
     std::vector<double> czasHistogram(liczba_testow); // czasy obliczen alg. histogram
+    std::vector<double> czasMapa(liczba_testow); // czasy obliczen alg. histogram
     std::string plik_we = "plik_we";
     std::string plik_wy = "plik_wy";
     for (int i = 0; i < liczba_testow; i++)
     {
-        /* zmienne pomocnicze - nazwy plikow wejsciowych i wyjsciowych */
+        // zmienne pomocnicze - nazwy plikow wejsciowych i wyjsciowych
         std::string nazwa_we = plik_we + std::to_string(i) + ".txt";
         std::string nazwa_wy = plik_wy + std::to_string(i) + ".txt";
 
         arr = generuj_losowy_ciag(arrLength);
         zapisz_ciag_do_pliku(nazwa_we, arr);
-    
-        /* testy algorytmu 2 petle */
+
+        // testy algorytmu 2 petle
         start = high_resolution_clock::now();
         wynik = znajdz_duplikaty_2_petle(arr);
         stop = high_resolution_clock::now();
         czas = stop - start;
         czas2Petle[i] = czas.count();
-        //std::cout << czasA[i] << "s\n";
 
-        /* testy algorytmu histogram */
+        // testy algorytmu histogram
         start = high_resolution_clock::now();
         wynik = znajdz_duplikaty_histogram(arr);
         stop = high_resolution_clock::now();
         czas = stop - start;
         czasHistogram[i] = czas.count();
-        //std::cout << czasB[i] << "s\n";
+
+        // testy algorytmu mapy
+        start = high_resolution_clock::now();
+        wynik = znajdz_duplikaty_mapa(arr);
+        stop = high_resolution_clock::now();
+        czas = stop - start;
+        czasMapa[i] = czas.count();
 
         //zapisz_ciag_do_pliku(nazwa_wy, wynik);
 
@@ -219,6 +254,7 @@ void testy()
 
     zapisz_ciag_floatow_do_pliku("czasy_2Petle.txt", czas2Petle);
     zapisz_ciag_floatow_do_pliku("czasy_Histogram.txt", czasHistogram);
+    zapisz_ciag_floatow_do_pliku("czasy_Mapa.txt", czasMapa);
 }
 
 
@@ -229,7 +265,7 @@ int main()
     srand(time(NULL));
 
     std::cout << "Tablica naiwna:" << std::endl;
-    std::vector<int> arr = {1, 2, 3, 4, 4, 5, 2};
+    std::vector<int> arr = { 1, 2, 3, 4, 4, 5, 2 };
     wypisz_ciag(arr);
     std::vector<int> wyniki = znajdz_duplikaty_2_petle(arr);
     std::cout << "Powtarzajace sie liczby: " << std::endl;
@@ -252,8 +288,20 @@ int main()
     czas = stop - start;
     std::cout << "Powtarzajace sie liczby:" << std::endl;
     wypisz_ciag(wyniki_2_petle);
-    std::cout << "Czas obliczen: " << std::setw(9) << czas.count() << " s." << std::endl;
+    std::cout << std::endl << "Czas obliczen: " << std::setw(9) << czas.count() << " s." << std::endl;
     zapisz_ciag_do_pliku("wyniki_2_petle.txt", wyniki_2_petle);
+    std::cout << std::endl;
+
+    // mapa
+    std::cout << "*** Algorytm: mapa" << std::endl;
+    start = high_resolution_clock::now();
+    std::vector<int> wyniki_mapa = znajdz_duplikaty_mapa(arr);
+    stop = high_resolution_clock::now();
+    czas = stop - start;
+    std::cout << "Powtarzajace sie liczby:" << std::endl;
+    wypisz_ciag(wyniki_mapa);
+    std::cout << std::endl << "Czas obliczen: " << std::setw(9) << czas.count() << " s." << std::endl;
+    zapisz_ciag_do_pliku("wyniki_mapa.txt", wyniki_mapa);
     std::cout << std::endl;
 
     // histogram
@@ -264,7 +312,7 @@ int main()
     czas = stop - start;
     std::cout << "Powtarzajace sie liczby:" << std::endl;
     wypisz_ciag(wyniki_histogram);
-    std::cout << "Czas obliczen: " << std::setw(9) << czas.count() << " s." << std::endl;
+    std::cout << std::endl << "Czas obliczen: " << std::setw(9) << czas.count() << " s." << std::endl;
     zapisz_ciag_do_pliku("wyniki_histogram.txt", wyniki_histogram);
     std::cout << std::endl;
 
