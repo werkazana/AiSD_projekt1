@@ -19,9 +19,10 @@ using namespace std::chrono;
 // deklaracje funkcji
 std::vector<int> generuj_losowy_ciag(int n);
 void wypisz_ciag(std::vector<int> arr);
+std::vector<int> znajdz_duplikaty_2_petle(std::vector<int> arr);
+std::vector<int> znajdz_duplikaty_mapa(std::vector<int> arr);
 std::vector<int> znajdz_duplikaty_histogram(std::vector<int> arr);
 bool zawiera_element(std::vector<int> arr, int liczba);
-std::vector<int> znajdz_duplikaty_2_petle(std::vector<int> arr);
 void zapisz_ciag_do_pliku(std::string nazwa, std::vector<int> arr);
 std::vector<int> odczytaj_ciag_z_pliku(std::string nazwa);
 void zapisz_ciag_floatow_do_pliku(std::string nazwa_pliku, std::vector<double> arr);
@@ -35,25 +36,27 @@ std::chrono::duration<double> czas;
 
 
 /////////////////////////////////////////////////////////////////////
-/* funkcja znajduje i zwraca elementy powtarzajace sie - algorytm histogramu */
-/* Algorytm o zlozonosci O(2n) */
-std::vector<int> znajdz_duplikaty_histogram(std::vector<int> arr)
+/* funkcja znajduje i zwraca elementy powtarzajace sie - algorytm 2 zagniezdzonych petli */
+/* Algorytm o zlozonosci O(n^2)-n */
+std::vector<int> znajdz_duplikaty_2_petle(std::vector<int> arr)
 {
-    std::vector<int> wynik; // tablica zawierajaca znalezione powtarzajace sie liczby
-    std::vector<int> histogram(arr.size(), 0); // tablica histogramu wypelnione zerami
+    std::vector<int> wynik;
 
     for (size_t i = 0; i < arr.size(); i++)
     {
-        int liczba = arr[i];
-        histogram[liczba] ++; // zwiekszanie elementu histogramu o 1
-    }
+        int liczba1 = arr[i]; // pierwsza liczba do porownywania
 
-    for (size_t i = 0; i < histogram.size(); i++)
-    {
-        if (histogram[i] > 1) // jesli wartosc > 1 to znaczy ze liczba sie powtarza co najmniej 2x
-            wynik.push_back(i);
-    }
+        if (!zawiera_element(wynik, liczba1)) // sprawdzenie czy liczba1 nie jest juz zapisana w tablicy powtorki jako powtarzajaca sie
+        {
+            for (size_t j = i + 1; j < arr.size(); j++)
+            {
+                int liczba2 = arr[j]; // druga liczba do porownania
 
+                if (liczba1 == liczba2 && !zawiera_element(wynik, liczba2))
+                    wynik.push_back(liczba1); // dodaj liczbe jesli liczba1==liczba2 i nie ma jej w tablicy powtorki
+            }
+        }
+    }
     return wynik;
 }
 
@@ -87,27 +90,25 @@ std::vector<int> znajdz_duplikaty_mapa(std::vector<int> arr)
 
 
 /////////////////////////////////////////////////////////////////////
-/* funkcja znajduje i zwraca elementy powtarzajace sie - algorytm 2 zagniezdzonych petli */
-/* Algorytm o zlozonosci O(n^2)-n */
-std::vector<int> znajdz_duplikaty_2_petle(std::vector<int> arr)
+/* funkcja znajduje i zwraca elementy powtarzajace sie - algorytm histogramu */
+/* Algorytm o zlozonosci O(2n) */
+std::vector<int> znajdz_duplikaty_histogram(std::vector<int> arr)
 {
-    std::vector<int> wynik;
+    std::vector<int> wynik; // tablica zawierajaca znalezione powtarzajace sie liczby
+    std::vector<int> histogram(arr.size(), 0); // tablica histogramu wypelnione zerami
 
     for (size_t i = 0; i < arr.size(); i++)
     {
-        int liczba1 = arr[i]; // pierwsza liczba do porownywania
-
-        if (!zawiera_element(wynik, liczba1)) // sprawdzenie czy liczba1 nie jest juz zapisana w tablicy powtorki jako powtarzajaca sie
-        {
-            for (size_t j = i + 1; j < arr.size(); j++)
-            {
-                int liczba2 = arr[j]; // druga liczba do porownania
-
-                if (liczba1 == liczba2 && !zawiera_element(wynik, liczba2))
-                    wynik.push_back(liczba1); // dodaj liczbe jesli liczba1==liczba2 i nie ma jej w tablicy powtorki
-            }
-        }
+        int liczba = arr[i];
+        histogram[liczba] ++; // zwiekszanie elementu histogramu o 1
     }
+
+    for (size_t i = 0; i < histogram.size(); i++)
+    {
+        if (histogram[i] > 1) // jesli wartosc > 1 to znaczy ze liczba sie powtarza co najmniej 2x
+            wynik.push_back(i);
+    }
+
     return wynik;
 }
 
@@ -232,19 +233,19 @@ void testy()
         czas = stop - start;
         czas2Petle[i] = czas.count();
 
-        // testy algorytmu histogram
-        start = high_resolution_clock::now();
-        wynik = znajdz_duplikaty_histogram(arr);
-        stop = high_resolution_clock::now();
-        czas = stop - start;
-        czasHistogram[i] = czas.count();
-
         // testy algorytmu mapy
         start = high_resolution_clock::now();
         wynik = znajdz_duplikaty_mapa(arr);
         stop = high_resolution_clock::now();
         czas = stop - start;
         czasMapa[i] = czas.count();
+
+        // testy algorytmu histogramu
+        start = high_resolution_clock::now();
+        wynik = znajdz_duplikaty_histogram(arr);
+        stop = high_resolution_clock::now();
+        czas = stop - start;
+        czasHistogram[i] = czas.count();
 
         //zapisz_ciag_do_pliku(nazwa_wy, wynik);
 
