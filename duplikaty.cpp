@@ -68,13 +68,10 @@ std::vector<int> znajdz_duplikaty_mapa(std::vector<int> arr)
     std::vector<int> wynik; // tablica zawierajaca znalezione powtarzajace sie liczby
     std::map<int, int> map; // mapa klucz - wartość
 
-    for (size_t i = 0; i < arr.size(); i++)
+    for (size_t i = 0; i < arr.size(); i++) // ulepszenie algorytmu
     {
         int liczba = arr[i];
-        if (map.find(liczba) != map.end())
-            map[liczba]++;
-        else
-            map[liczba] = 1;
+        map[liczba]++;
     }
 
     for (std::map<int, int>::iterator iter = map.begin(); iter != map.end(); ++iter)
